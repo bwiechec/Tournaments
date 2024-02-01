@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Create new account! {% endblock %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-md-center">
+        <div class="tournament_item col-md-8 align-items-center justify-content-md-center" style="padding: 10px">
+            <h2 class="text-center">{{ match.player_one.username }} vs {{ match.player_two.username }}</h2><hr/>
+            <p>Score: {{ match.score }}</p>
+            <p>Tournament: {{ match.tournament.name }}</p>
+            <p>Round: {{ match.round }}</p>
+            {% if match.winner is not None %}
+            <p>Winner: {{ match.winner.username }}</p>
+            {% endif %}
+                <a class="btn btn-success" href="/tournament/view/{{ match.tournament_id }}" role="button">
+                    <- Back to tournament
+                </a>
+            {% if match.score is None and user.id == match.tournament.creator_id %}
+                <a class="btn btn-success float-right" href="/tournament/match/setScore/{{ match.id }}" role="button">
+                    Set score
+                </a>
+            {% endif %}
+            {% if user.is_superuser %}
+                <a class="btn btn-success float-right" href="/tournament/match/setScore/{{ match.id }}" role="button">
+                    Set score
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

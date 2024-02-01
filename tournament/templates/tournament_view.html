@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Create new account! {% endblock %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-md-center">
+        <div class="tournament_item col-md-8 align-items-center justify-content-md-center" style="padding: 10px; margin-top: 2%">
+            <h2 class="text-center">{{ tournament.name }}</h2><hr/>
+            <p>Current attendants count: {{ current_attendants }}/{{ tournament.max_attendants }}</p>
+            <p>Start date: {{ tournament.start_date |date:"d/m/Y G:i" }}</p>
+            <div>Status:
+                {% if tournament.ladder_created and not tournament.is_finished %}
+                    <p style="color: darkolivegreen">Tournament in progress</p>
+                {% elif not tournament.ladder_created %}
+                    <p style="color: cornflowerblue">Registration open</p>
+                {% else %}
+                    <p style="color: indianred">Finished</p>
+                {% endif %}
+            </div>
+            {% if tournament.is_finished %}
+                <p>Winner: <b>{{ tournament.winner.username }}</b></p>
+            {% endif %}
+
+            <div class="admin_actions float-right">
+                {% if user.is_superuser %}
+                <a class="btn btn-success" href="/tournament/edit/{{ tournament.id }}" role="button">Edit</a>
+                {% elif user.id == tournament.creator_id and not tournament.ladder_created %}
+                <a class="btn btn-success" href="/tournament/edit/{{ tournament.id }}" role="button">Edit</a>
+                {% endif %}
+
+                {% if user.is_superuser %}
+                <a class="btn btn-danger" href="/tournament/delete/{{ tournament.id }}" role="button">Delete</a>
+                {% elif user.id == tournament.creator_id and not tournament.ladder_created %}
+                <a class="btn btn-danger" href="/tournament/delete/{{ tournament.id }}" role="button">Delete</a>
+                {% endif %}
+            </div>
+
+        </div>
+        <div class="tournament_item col-md-8 align-items-center justify-content-md-center align-items-center" style="padding: 10px;
+                                                                                                    margin-top: 5%">
+            <h2 class="text-center">
+                Players list
+                {% if not tournament.ladder_created %}
+                    {% if current_attendants < tournament.max_attendants %}
+                        {% if user.is_superuser %}
+                            <a class="btn btn-success float-right" href="/tournament/add_attendant/{{ tournament.id }}"
+                           role="button">Add player</a>
+                        {% elif user.id == tournament.creator_id and not tournament.ladder_created %}
+                            <a class="btn btn-success float-right" href="/tournament/add_attendant/{{ tournament.id }}"
+                           role="button">Add player</a>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </h2>
+
+            <hr/>
+            {% if users_in_tournament is not None %}
+                <div class="d-flex justify-content-center">
+                    <div class="list-group col-md-8 text-center justify-content-md-center">
+                    {% for user in users_in_tournament %}
+                        <a href="#" class="list-group-item list-group-item-action"><h6>{{user.user.username}}</h6></a>
+                    {% endfor %}
+                    </div>
+                </div>
+                    {% else %}
+                        <h6>No users added to this tournament</h6>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="clear-both"></div>
+
+        {% if matches is not None %}
+        <div class="tournament_item col-md-8 align-items-center justify-content-md-center align-items-center" style="padding: 10px;
+                                                                                                    margin: 5% 0">
+            <h2 class="text-center">
+                Matches
+            </h2>
+
+            <hr/>
+                <div class="d-flex justify-content-center">
+                    {% for match_list in matches %}
+                        <div class="list-group col-md-2 text-center justify-content-md-center">
+                        {% for match in match_list %}
+                            <a href="/tournament/match/view/{{ match.id }}/" class="list-group-item list-group-item-action">
+                            {% if match.winner_id == match.player_one_id and match.player_one_id is not None %}
+                                <b>{{match.player_one.username}}</b>
+                                    vs
+                                {{match.player_two.username}}
+                            {% elif match.winner_id == match.player_two_id and match.player_two_id is not None %}
+                                {{match.player_one.username}}
+                                    vs
+                                <b>{{match.player_two.username}}</b>
+                            {% elif match.player_one_id is not None or match.player_two_id is not None %}
+                                {{match.player_one.username}}
+                                    vs
+                                {{match.player_two.username}}
+                            {% endif %}
+                            {% if match.score is not None %}
+                                    <b>{{ match.score }}</b>
+                            {% endif %}
+                            </a>
+                        {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

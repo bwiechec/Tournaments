@@ -1,0 +1,5 @@
+.tournament_item{
+    -webkit-box-shadow: 5px 9px 24px -11px rgba(66, 68, 90, 1);
+    -moz-box-shadow: 5px 9px 24px -11px rgba(66, 68, 90, 1);
+    box-shadow: 5px 9px 24px -11px rgba(66, 68, 90, 1);
+}

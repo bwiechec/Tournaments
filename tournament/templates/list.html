@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Create new account! {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h2 class="col-md-8">List of tournaments </h2>
+    <br>
+    {% if form %}
+    <div class="row justify-content-md-center">
+        <form method="POST" class="form-group form-inline" style="background-color: rgba(255, 255, 255, 0.15);">
+
+            {% csrf_token %}
+            {{form | crispy}}
+            <button type="submit" class="btn btn-success">Filter</button>
+        </form>
+    </div>
+    {% endif %}
+
+<div class="row justify-content-md-center">
+
+    <div class="list-group col-md-8 text-center">
+        {% for singleTournament in tournaments %}
+        <a href="/tournament/view/{{singleTournament.id}}/" class="list-group-item list-group-item-action"><h5>{{singleTournament}}</h5></a>
+        {% endfor %}
+    </div>
+</div>
+<script>
+    document.getElementById('id_date_start').setAttribute('type', 'date')
+    document.getElementById('id_date_end').setAttribute('type', 'date')
+
+    document.getElementById('div_id_date_start').classList = 'form-group'
+    document.getElementById('div_id_date_end').classList = 'form-group'
+</script>
+{% endblock %}

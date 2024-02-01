@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{%block title %}
+    Login
+{% endblock%}
+
+{% load crispy_forms_tags %}
+{%block content %}
+
+    {% if not user.is_authenticated %}
+        <div class="row justify-content-md-center">
+
+
+            <form method="POST" class="form-group p-5 col-4 rounded border " style="background-color: rgba(255, 255, 255, 0.15);">
+                {% csrf_token%}
+                {{form|crispy}}
+                <button type="submit" class="btn btn-success">Login</button>
+                <p>Don't have an account? You can create account <a href="../register/">here</a></p>
+            </form>
+        </div>
+    {% else %}
+        <p>You're alredy logged in!</p>
+    {% endif %}
+{% endblock%}
